@@ -5,7 +5,6 @@ import ru.barabo.statement.data.DelegateDataExtractExportXLS;
 import ru.barabo.statement.data.IDataExtractExportXLS;
 import ru.barabo.statement.main.resources.ResourcesManager;
 import ru.barabo.statement.ui.ExtractXLSExport;
-import ru.barabo.statement.ui.TableFNS;
 import ru.barabo.total.report.rtf.RtfReport;
 
 import javax.swing.*;
