@@ -25,11 +25,7 @@ public class DelegateDataExtractExportXLS implements IDataExtractExportXLS {
 	static private final String SEL_SID = //"select sid from v$mystat where rownum = 1";
 			"select classified.nextval from dual";
 		//"select od.PTKB_PLAN_TYPEBANK.nextval from dual";
-	
-	private final String SEL_42307 = "select a.code from account a where substr(a.code, 1, 8) = '42307978' "
-			+ " and a.sysfilial = 1 and exists (select * from bbook where a.doc in (debaccount, credaccount) "
-			+ " and operdate >= to_date('11/01/2016', 'dd/mm/yyyy') and operdate < to_date('21/01/2016', 'dd/mm/yyyy') )";
-	
+
 	private final String SEL_ACCOUNT = "select a.code from od.account a, od.doctree dt "
 			+ " where dt.classified = a.doc and a.code like replace(replace(?, '*', '%'), '?', '_') "
 			+ " and a.sysfilial = 1 and a.foldaccount is null and dt.docstate in (1000000035, 1000000039)";

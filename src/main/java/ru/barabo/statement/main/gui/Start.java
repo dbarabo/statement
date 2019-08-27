@@ -284,7 +284,7 @@ public class Start extends JFrame{
 				GridBagConstraints.BOTH,
 				new Insets(2, 2, 2, 2), 0, 0);
 
-		panel.add( accounts, gridConstComp);
+		panel.add( new JScrollPane(accounts), gridConstComp);
 
 
 		JButton buttonOk = new  JButton(new ExtractXLSExport(data, account,
