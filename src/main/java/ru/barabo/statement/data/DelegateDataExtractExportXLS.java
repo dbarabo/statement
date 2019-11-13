@@ -33,6 +33,8 @@ public class DelegateDataExtractExportXLS implements IDataExtractExportXLS {
 	
 	private final String SEL_TURN_ONLY = " and exists (select * from bbook b where a.doc in (b.debaccount, b.credaccount) "
 			+ " and b.operdate >= ? and b.operdate < ? + 1 )";
+
+	private final String SEL_OPEN_ONLY = " and dt.docstate = 1000000039 ";
 	
 	static private final String SEL_DATA = 
 		"select ORD, to_char(OPER, 'dd.mm.yy'), SHIFR, NUMBER_DOC, to_char(DATE_DOC, 'dd.mm.yy'), BANK_ACCOUNT, BANK_NAME, BANK_BIK, PAY_NAME, " + 
@@ -111,13 +113,17 @@ public class DelegateDataExtractExportXLS implements IDataExtractExportXLS {
 	@Override
 	public List<String> startExport(String account, Date dateFrom, Date dateTo,
 			String path, String fnsName, String fnsAddress, String fnsRequest, boolean isTurn,
-			boolean isRur) {
+			boolean isRur, boolean isOpened) {
 
 		String select = SEL_ACCOUNT;
 		Object[] params = new Object[]{account};
 		if(isTurn) {
 			select += SEL_TURN_ONLY;
 			params = new Object[]{account, new java.sql.Date(dateFrom.getTime()), new java.sql.Date(dateTo.getTime()) };
+		}
+
+		if(isOpened) {
+			select += SEL_OPEN_ONLY;
 		}
 
 		List<Object[]> values = AfinaQuery.INSTANCE.select(select, params);

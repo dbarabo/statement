@@ -213,6 +213,27 @@ public class Start extends JFrame{
 				GridBagConstraints.HORIZONTAL,
 				new Insets(2, 2, 2, 2), 0, 0);
 
+
+		label = new JLabel("только открытые");
+		label.setHorizontalAlignment(SwingConstants.RIGHT);
+		panel.add(label, gridConstLabel);
+		JCheckBox isOpened = new JCheckBox("в указанный период");
+		panel.add(isTurn, gridConstComp);
+
+		gridConstLabel = new GridBagConstraints(
+				0, 6, 1, 1, // плюс заголовок
+				0.0, 0.0,
+				GridBagConstraints.PAGE_START,
+				GridBagConstraints.HORIZONTAL,
+				new Insets(2, 2, 2, 2), 0, 0);
+
+		gridConstComp = new GridBagConstraints(
+				1, 6, 3, 1, // плюс заголовок
+				1.0, 0.0,
+				GridBagConstraints.PAGE_START,
+				GridBagConstraints.HORIZONTAL,
+				new Insets(2, 2, 2, 2), 0, 0);
+
 		/*
 		label = new JLabel("Дата и номер запроса ФНС:");
 		label.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -288,7 +309,7 @@ public class Start extends JFrame{
 
 
 		JButton buttonOk = new  JButton(new ExtractXLSExport(data, account,
-				dateFrom, dateTo, path,  isTurn, rurCombo, accounts, this) );
+				dateFrom, dateTo, path,  isTurn, rurCombo, accounts, this, isOpened) );
 
 		gridConstComp = new GridBagConstraints(
 				3, 21, 1, 1, // плюс заголовок

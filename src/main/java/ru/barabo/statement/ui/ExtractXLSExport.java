@@ -22,13 +22,15 @@ public class ExtractXLSExport extends AbstractAction {
     private JComboBox<String> rurCombo;
     private JList<String> accounts;
     private JFrame frame;
+    private JCheckBox isOpened;
 
     public ExtractXLSExport(IDataExtractExportXLS data,
                             JTextField account, JFormattedTextField dateFrom,
                             JFormattedTextField dateTo, JTextField path,
                             JCheckBox isTurn, JComboBox rurCombo,
                             JList<String> accounts,
-                            JFrame frame) {
+                            JFrame frame,
+                            JCheckBox isOpened) {
         super();
         this.data = data;
         this.dateFrom = dateFrom;
@@ -36,6 +38,7 @@ public class ExtractXLSExport extends AbstractAction {
         this.account = account;
         this.path = path;
         this.isTurn = isTurn;
+        this.isOpened = isOpened;
         this.rurCombo = rurCombo;
         this.accounts = accounts;
         this.frame = frame;
@@ -62,7 +65,8 @@ public class ExtractXLSExport extends AbstractAction {
                 fnsAddress.getText(),
                 fnsRequest.getText(),*/
                 isTurn.isSelected(),
-                rurCombo.getSelectedIndex() == 0)) ;
+                rurCombo.getSelectedIndex() == 0,
+                isOpened.isSelected())) ;
 
         accounts.removeAll();
 

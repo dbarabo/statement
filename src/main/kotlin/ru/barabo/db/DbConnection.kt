@@ -3,6 +3,8 @@ package ru.barabo.db
 import ru.barabo.statement.main.resources.owner.Cfg
 import java.sql.Connection
 import java.sql.SQLException
+import java.util.*
+import kotlin.collections.ArrayList
 
 open class DbConnection(protected val dbSetting: DbSetting) {
    // private val logger = LoggerFactory.getLogger(DbConnection::class.java)

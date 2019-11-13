@@ -10,7 +10,7 @@ public interface IDataExtractExportXLS {
 	 * @return true если все хорошо
 	 */
 	List<String> startExport(String account, Date dateFrom, Date dateTo,
-							 String path, String fnsName, String fnsAddress, String fnsRequest, boolean isTurn, boolean isRur);
+							 String path, String fnsName, String fnsAddress, String fnsRequest, boolean isTurn, boolean isRur, boolean isOpened);
 	
 	/**
 	 * @return ч-ло столбцов в таблице фНС
