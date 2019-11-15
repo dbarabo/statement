@@ -8,10 +8,7 @@ import ru.barabo.statement.jexel.ExportExtract;
 import ru.barabo.statement.main.resources.ResourcesManager;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
 
 public class DelegateDataExtractExportXLS implements IDataExtractExportXLS {
 
@@ -34,8 +31,8 @@ public class DelegateDataExtractExportXLS implements IDataExtractExportXLS {
 	private final String SEL_TURN_ONLY = " and exists (select * from bbook b where a.doc in (b.debaccount, b.credaccount) "
 			+ " and b.operdate >= ? and b.operdate < ? + 1 )";
 
-	private final String SEL_OPEN_ONLY = " and dt.docstate = 1000000039 ";
-	
+	private final String SEL_OPEN_ONLY = " and a.opened <= ? and a.closed >= ? "; // кОНЕЦ начало
+
 	static private final String SEL_DATA = 
 		"select ORD, to_char(OPER, 'dd.mm.yy'), SHIFR, NUMBER_DOC, to_char(DATE_DOC, 'dd.mm.yy'), BANK_ACCOUNT, BANK_NAME, BANK_BIK, PAY_NAME, " + 
 		" PAY_INN, PAY_KPP, PAY_ACCOUNT, to_char(SUM_DEB, '99999999990d00'), to_char(SUM_CRED, '99999999990d00'), DESCRIPTION,  to_char(REST_IN, '99999999990d00')" +
@@ -124,6 +121,10 @@ public class DelegateDataExtractExportXLS implements IDataExtractExportXLS {
 
 		if(isOpened) {
 			select += SEL_OPEN_ONLY;
+
+            params = Arrays.copyOf(params, params.length + 2);
+            params[params.length - 2] =  new java.sql.Date(dateTo.getTime());
+            params[params.length - 1] =  new java.sql.Date(dateFrom.getTime());
 		}
 
 		List<Object[]> values = AfinaQuery.INSTANCE.select(select, params);

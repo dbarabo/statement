@@ -218,9 +218,9 @@ public class Start extends JFrame{
 		label.setHorizontalAlignment(SwingConstants.RIGHT);
 		panel.add(label, gridConstLabel);
 		JCheckBox isOpened = new JCheckBox("в указанный период");
-		panel.add(isTurn, gridConstComp);
+		panel.add(isOpened, gridConstComp);
 
-		gridConstLabel = new GridBagConstraints(
+		/*gridConstLabel = new GridBagConstraints(
 				0, 6, 1, 1, // плюс заголовок
 				0.0, 0.0,
 				GridBagConstraints.PAGE_START,
@@ -233,7 +233,7 @@ public class Start extends JFrame{
 				GridBagConstraints.PAGE_START,
 				GridBagConstraints.HORIZONTAL,
 				new Insets(2, 2, 2, 2), 0, 0);
-
+*/
 		/*
 		label = new JLabel("Дата и номер запроса ФНС:");
 		label.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -299,7 +299,7 @@ public class Start extends JFrame{
 		accounts.addMouseListener(getJListClicker(accounts));
 
 		gridConstComp = new GridBagConstraints(
-				0, 8, 4, 12, // плюс заголовок
+				0, 7, 4, 12, // плюс заголовок
 				1.0, 1.0,
 				GridBagConstraints.PAGE_START,
 				GridBagConstraints.BOTH,
