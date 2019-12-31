@@ -10,7 +10,8 @@ public interface IDataExtractExportXLS {
 	 * @return true если все хорошо
 	 */
 	List<String> startExport(String account, Date dateFrom, Date dateTo,
-							 String path, String fnsName, String fnsAddress, String fnsRequest, boolean isTurn, boolean isRur, boolean isOpened);
+							 String path, String fnsName, String fnsAddress, String fnsRequest, boolean isTurn,
+							 boolean isRur, boolean isOpened, boolean isShowRestEveryDay);
 	
 	/**
 	 * @return ч-ло столбцов в таблице фНС
@@ -27,9 +28,7 @@ public interface IDataExtractExportXLS {
 	Object getFNSValue(int rowIndex, int columnIndex);
 	
 	String getFNSSelected(int columnIndex);
-	
-	int getFNSSelectedRow();
-	
+
 	void setFNSSelectedRow(int row);
 
 	String checkAccount(String account);

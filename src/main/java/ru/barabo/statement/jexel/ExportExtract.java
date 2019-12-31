@@ -1,6 +1,5 @@
 package ru.barabo.statement.jexel;
 
-import jxl.Sheet;
 import jxl.Workbook;
 import jxl.format.Alignment;
 import jxl.format.Border;
@@ -11,7 +10,6 @@ import org.apache.log4j.Logger;
 
 import javax.swing.*;
 import java.io.File;
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.util.Date;
@@ -29,58 +27,48 @@ public class ExportExtract {
 	private String valuta = "";
 
 	public void export(File file, Vector<Object[]> data, String newFile,
-			String fnsName, String fnsAddress, String fnsRequest) {
+			String fnsName, String fnsAddress, String fnsRequest, boolean isShowRestEveryDay) {
 		WritableSheet sheet = null;
-		
-		Sheet sheet0 = null;
-		
+
 		WritableWorkbook copy = null;
 		Workbook workbook0 = null;
 		try {
 			workbook0 = Workbook.getWorkbook(file);
-			if(workbook0 == null) return;
+
 			copy = Workbook.createWorkbook(new File(newFile), workbook0); //создание копии файла 4read.xls
 			
 			if(copy == null) {
 				logger.error("ExportExtract export copy = null ");
 			}
-			
-			sheet = (WritableSheet)copy.getSheet(0);
-			/*
-			sheet0 = workbook0.getSheet(0);
-			SheetSettings settings = new SheetSettings(sheet);// объект параметров листа
-			
-			settings.get
-			SheetSettings settings0 = new SheetSettings(sheet0);
-*/
+
+			assert copy != null;
+			sheet = copy.getSheet(0);
+
 		} catch (Exception e) {
 			logger.error("export IOException " + e.getMessage());
 
 			JOptionPane.showMessageDialog(null, e.getMessage(), null, JOptionPane.ERROR_MESSAGE);
 
 		}
-		
+
+		assert sheet != null;
 		fillHead(sheet, data.get(0), fnsName, fnsAddress, fnsRequest);
 		
-		exportRows(sheet, data);
-		
-		if(copy != null) {
-			workbook0.close();
-			try {
-				copy.write();
-				copy.close();
-			} catch (Exception e) {
-				logger.error("export workbook0.close IOException " + e.getLocalizedMessage());
+		exportRows(sheet, data, isShowRestEveryDay);
 
-				JOptionPane.showMessageDialog(null, e.getMessage(), null, JOptionPane.ERROR_MESSAGE);
-			}
+		workbook0.close();
+		try {
+			copy.write();
+			copy.close();
+		} catch (Exception e) {
+			logger.error("export workbook0.close IOException " + e.getLocalizedMessage());
+
+			JOptionPane.showMessageDialog(null, e.getMessage(), null, JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	
 	/**
 	 * Заполняем шапку
-	 * @param sheet
-	 * @param headRow
 	 */
 	private void fillHead(WritableSheet sheet, Object[] headRow,
 			String fnsName, String fnsAddress, String fnsRequest) {
@@ -158,15 +146,23 @@ public class ExportExtract {
 			sheet.addCell(label);
 		
 		} catch (WriteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			logger.error("fillHead WriteException " + e.getLocalizedMessage());
+			logger.error("fillHead WriteException ", e);
 		}
 	}
 	
 	static final transient private String ROW_REST_OUT = "%s Входящий остаток: %s %s";
+
+	private Label showRestEveryDay(String operDate, String priorOperDate, Object restValue, int column, int row, WritableCellFormat formatFont) {
+		if(operDate == null || (operDate.equals(priorOperDate))) {
+			return null;
+		}
+
+		String txtRest = String.format(ROW_REST_OUT, operDate, restValue, valuta);
+
+		return new Label(column, row, txtRest, formatFont);
+	}
 	
-	private void exportRows(WritableSheet sheet, Vector<Object[]> data) {
+	private void exportRows(WritableSheet sheet, Vector<Object[]> data, boolean isShowRestEveryDay) {
 		
 		//установка шрифта
 		WritableFont arial12ptBold =
@@ -201,17 +197,18 @@ public class ExportExtract {
 				Object[] row = data.get(rw);
 				
 				String oper = (String)row[1];
-				// выводим остаток
-				if(oper != null && !(oper.equals(priorOperDate))) {
-					String txtRest = String.format(ROW_REST_OUT, oper, row[row.length - 1], valuta);
-					priorOperDate = oper;
-					
-					Label lab = new Label(dCol, rw + dRow + rowRest, txtRest, arial12BoldBoldFormat);
-					sheet.addCell(lab);
-					
-					rowRest++;
+
+				// выводим остаток если нужно
+				if(isShowRestEveryDay) {
+					Label lab = showRestEveryDay(oper, priorOperDate, row[row.length - 1], dCol, rw + dRow + rowRest, arial12BoldBoldFormat);
+
+					if(lab != null) {
+						sheet.addCell(lab);
+						priorOperDate = oper;
+						rowRest++;
+					}
 				}
-				
+
 				for(int col = 0; col < row.length - 1; col++) {
 					String text = (row[col] == null) ? "" : row[col].toString();
 					Label label = new Label(columns[col] + dCol, rw + dRow + rowRest, text, arial12BoldFormat);
@@ -221,7 +218,7 @@ public class ExportExtract {
 					}
 					
 					if(col == 12 || col == 13) {
-						Double val = 0.0;
+						double val;
 						//logger.debug("row[" + col + "]=" + text);
 						try {
 							val = (row[col] == null || "".equals(text)) 
@@ -243,9 +240,7 @@ public class ExportExtract {
 			logger.debug("sumCred=" + sumCred);
 			fillTail(sheet, data.get(0), sumDeb, sumCred, data.size() + 36 + rowRest);
 		} catch (WriteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			logger.error("exportRows WriteException " + e.getLocalizedMessage());
+			logger.error("exportRows WriteException ", e);
 		}
 	}
 	
@@ -288,7 +283,7 @@ public class ExportExtract {
 			arial12BoldFormat.setBackground(Colour.WHITE); //установить цвет
 			arial12BoldFormat.setBorder(Border.ALL, BorderLineStyle.MEDIUM); //рисуем рамку
 			// Данные
-			text = (headRow[12] == null) ? "" : headRow[12].toString(); ;
+			text = (headRow[12] == null) ? "" : headRow[12].toString();
 			label = new Label(1, row, text, arial12BoldFormat); 
 			sheet.addCell(label);
 			sheet.mergeCells(1, row, 5, row);
@@ -304,7 +299,7 @@ public class ExportExtract {
 			sheet.addCell(label);
 			sheet.mergeCells(13, row, 19, row);
 			
-			text = (headRow[13] == null) ? "" : headRow[13].toString(); ;
+			text = (headRow[13] == null) ? "" : headRow[13].toString();
 			label = new Label(20, row, text, arial12BoldFormat); 
 			sheet.addCell(label);
 			sheet.mergeCells(20, row, 26, row);
@@ -330,12 +325,7 @@ public class ExportExtract {
 			sheet.addCell(label);
 			
 		} catch (WriteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			logger.error("fillTail WriteException " + e.getLocalizedMessage());
+			logger.error("fillTail WriteException ", e);
 		}
-		
-		
-		
 	}
 }

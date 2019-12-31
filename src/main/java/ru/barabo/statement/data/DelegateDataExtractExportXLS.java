@@ -33,7 +33,7 @@ public class DelegateDataExtractExportXLS implements IDataExtractExportXLS {
 
 	private final String SEL_OPEN_ONLY = " and a.opened <= ? and a.closed >= ? "; // кОНЕЦ начало
 
-	static private final String SEL_DATA = 
+	static private final String SEL_DATA =
 		"select ORD, to_char(OPER, 'dd.mm.yy'), SHIFR, NUMBER_DOC, to_char(DATE_DOC, 'dd.mm.yy'), BANK_ACCOUNT, BANK_NAME, BANK_BIK, PAY_NAME, " + 
 		" PAY_INN, PAY_KPP, PAY_ACCOUNT, to_char(SUM_DEB, '99999999990d00'), to_char(SUM_CRED, '99999999990d00'), DESCRIPTION,  to_char(REST_IN, '99999999990d00')" +
 		" from od.PTKB_TMP_EXTRACT where SID = ? order by ORD";
@@ -53,15 +53,8 @@ public class DelegateDataExtractExportXLS implements IDataExtractExportXLS {
 	
 	public DelegateDataExtractExportXLS() {
 		this.selectedRow = 0;
-		// fillFNS();
 	}
-	
-	private void fillFNS() {
-		fns = new Vector<Object[]>();
 
-		fns.addAll( AfinaQuery.INSTANCE.select(SEL_FNS, null) );
-	}
-	
 	@Override
 	public int getFNSColumnCount() {
 		return FNS_CLOUMNS.length;
@@ -86,11 +79,6 @@ public class DelegateDataExtractExportXLS implements IDataExtractExportXLS {
 	}
 
 	@Override
-	public int getFNSSelectedRow() {
-		return selectedRow;
-	}
-
-	@Override
 	public void setFNSSelectedRow(int row) {
 		selectedRow = row;
 	}
@@ -110,7 +98,7 @@ public class DelegateDataExtractExportXLS implements IDataExtractExportXLS {
 	@Override
 	public List<String> startExport(String account, Date dateFrom, Date dateTo,
 			String path, String fnsName, String fnsAddress, String fnsRequest, boolean isTurn,
-			boolean isRur, boolean isOpened) {
+			boolean isRur, boolean isOpened, boolean isShowRestEveryDay) {
 
 		String select = SEL_ACCOUNT;
 		Object[] params = new Object[]{account};
@@ -140,20 +128,18 @@ public class DelegateDataExtractExportXLS implements IDataExtractExportXLS {
 
 			SessionSetting unicSession = AfinaQuery.INSTANCE.uniqueSession();
 
-			Vector<Object[]> data = new Vector<Object[]>();
-
 			try {
 				AfinaQuery.INSTANCE.execute(EXEC_EXTRACT,
 						new Object[]{new java.sql.Date(dateFrom.getTime()), new java.sql.Date(dateTo.getTime()), account, sid, rur },
 						unicSession, null);
 
-				data.addAll( AfinaQuery.INSTANCE.select(SEL_DATA, new Object[]{sid}, unicSession) );
+				Vector<Object[]> data = new Vector<>(AfinaQuery.INSTANCE.select(SEL_DATA, new Object[]{sid}, unicSession));
 
 				AfinaQuery.INSTANCE.execute(DEL_SID, new Object[] { sid }, unicSession, null);
 
 				AfinaQuery.INSTANCE.rollbackFree(unicSession);
 
-				result.add(exportXLS(data, path, account, fnsName, fnsAddress, fnsRequest));
+				result.add(exportXLS(data, path, account, fnsName, fnsAddress, fnsRequest, isShowRestEveryDay));
 
 			} catch (SessionException e) {
 				logger.error(EXEC_EXTRACT, e);
@@ -166,11 +152,9 @@ public class DelegateDataExtractExportXLS implements IDataExtractExportXLS {
 	
 	/**
 	 * Экспортирует данные в эксель книгу
-	 * @param data
-	 * @return
 	 */
 	private String exportXLS(Vector<Object[]> data, String path,
-			String account, String fnsName, String fnsAddress, String fnsRequest) {
+			String account, String fnsName, String fnsAddress, String fnsRequest, boolean isShowRestEveryDay) {
 		String maket = "/maketv.xls";
 		
 		String newMaket = path + "/" + account + ".xls";
@@ -182,7 +166,7 @@ public class DelegateDataExtractExportXLS implements IDataExtractExportXLS {
 
 		ExportExtract exp = new ExportExtract();
 		
-		exp.export(oldFile, data, newMaket, fnsName, fnsAddress, fnsRequest);
+		exp.export(oldFile, data, newMaket, fnsName, fnsAddress, fnsRequest, isShowRestEveryDay);
 
 		oldFile.delete();
 		

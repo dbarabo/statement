@@ -220,6 +220,28 @@ public class Start extends JFrame{
 		JCheckBox isOpened = new JCheckBox("в указанный период");
 		panel.add(isOpened, gridConstComp);
 
+
+		gridConstLabel = new GridBagConstraints(
+				0, 7, 1, 1, // плюс заголовок
+				0.0, 0.0,
+				GridBagConstraints.PAGE_START,
+				GridBagConstraints.HORIZONTAL,
+				new Insets(2, 2, 2, 2), 0, 0);
+
+		gridConstComp = new GridBagConstraints(
+				1, 7, 3, 1, // плюс заголовок
+				1.0, 0.0,
+				GridBagConstraints.PAGE_START,
+				GridBagConstraints.HORIZONTAL,
+				new Insets(2, 2, 2, 2), 0, 0);
+
+		label = new JLabel("Ежедневные остатки");
+		label.setHorizontalAlignment(SwingConstants.RIGHT);
+		panel.add(label, gridConstLabel);
+		JCheckBox isShowEveryDay = new JCheckBox("показывать строкой");
+		panel.add(isShowEveryDay, gridConstComp);
+
+
 		/*gridConstLabel = new GridBagConstraints(
 				0, 6, 1, 1, // плюс заголовок
 				0.0, 0.0,
@@ -299,7 +321,7 @@ public class Start extends JFrame{
 		accounts.addMouseListener(getJListClicker(accounts));
 
 		gridConstComp = new GridBagConstraints(
-				0, 7, 4, 12, // плюс заголовок
+				0, 8, 4, 12, // плюс заголовок
 				1.0, 1.0,
 				GridBagConstraints.PAGE_START,
 				GridBagConstraints.BOTH,
@@ -309,10 +331,10 @@ public class Start extends JFrame{
 
 
 		JButton buttonOk = new  JButton(new ExtractXLSExport(data, account,
-				dateFrom, dateTo, path,  isTurn, rurCombo, accounts, this, isOpened) );
+				dateFrom, dateTo, path,  isTurn, rurCombo, accounts, this, isOpened, isShowEveryDay) );
 
 		gridConstComp = new GridBagConstraints(
-				3, 21, 1, 1, // плюс заголовок
+				3, 22, 1, 1, // плюс заголовок
 				1.0, 0.0,
 				GridBagConstraints.PAGE_END,
 				GridBagConstraints.HORIZONTAL,
