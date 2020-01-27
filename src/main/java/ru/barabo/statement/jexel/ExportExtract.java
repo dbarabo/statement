@@ -152,6 +152,8 @@ public class ExportExtract {
 	
 	static final transient private String ROW_REST_OUT = "%s Входящий остаток: %s %s";
 
+	static final transient private String ROW_REST_OUTOUT = "%s Исходящий остаток: %s %s";
+
 	private Label showRestEveryDay(String operDate, String priorOperDate, Object restValue, int column, int row, WritableCellFormat formatFont) {
 		if(operDate == null || (operDate.equals(priorOperDate))) {
 			return null;
@@ -161,7 +163,17 @@ public class ExportExtract {
 
 		return new Label(column, row, txtRest, formatFont);
 	}
-	
+
+	private Label showRestOutEveryDay(String operDate, String priorOperDate, Object restValue, int column, int row, WritableCellFormat formatFont) {
+		if(priorOperDate == null || priorOperDate.equals(operDate)) {
+			return null;
+		}
+
+		String txtRestOut = String.format(ROW_REST_OUTOUT, priorOperDate, restValue, valuta);
+
+		return  new Label(column, row, txtRestOut, formatFont);
+	}
+
 	private void exportRows(WritableSheet sheet, Vector<Object[]> data, boolean isShowRestEveryDay) {
 		
 		//установка шрифта
@@ -200,12 +212,20 @@ public class ExportExtract {
 
 				// выводим остаток если нужно
 				if(isShowRestEveryDay) {
+					if(priorOperDate != null) {
+						Label labOut = showRestOutEveryDay(oper, priorOperDate, row[row.length - 1], dCol + 30, rw + dRow + rowRest, arial12BoldBoldFormat);
+						if(labOut != null) {
+							sheet.addCell(labOut);
+							rowRest++;
+						}
+					}
+
 					Label lab = showRestEveryDay(oper, priorOperDate, row[row.length - 1], dCol, rw + dRow + rowRest, arial12BoldBoldFormat);
 
 					if(lab != null) {
 						sheet.addCell(lab);
-						priorOperDate = oper;
 						rowRest++;
+						priorOperDate = oper;
 					}
 				}
 
@@ -235,9 +255,15 @@ public class ExportExtract {
 					}
 				}
 			}
-			
-			logger.debug("sumDeb=" + sumDeb);
-			logger.debug("sumCred=" + sumCred);
+
+			if(isShowRestEveryDay && data.size() > 1) {
+
+				String restEnd = (data.get(0)[13] == null) ? "" : data.get(0)[13].toString();
+
+				Label labOut = showRestOutEveryDay(priorOperDate + "!", priorOperDate, restEnd, 31, data.size() + dRow + rowRest, arial12BoldBoldFormat);
+				sheet.addCell(labOut);
+			}
+
 			fillTail(sheet, data.get(0), sumDeb, sumCred, data.size() + 36 + rowRest);
 		} catch (WriteException e) {
 			logger.error("exportRows WriteException ", e);
