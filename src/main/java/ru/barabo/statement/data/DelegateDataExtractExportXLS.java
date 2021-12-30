@@ -139,6 +139,12 @@ public class DelegateDataExtractExportXLS implements IDataExtractExportXLS {
 
 				AfinaQuery.INSTANCE.rollbackFree(unicSession);
 
+				File pathFile = new File(path);
+
+				if(!pathFile.exists()) {
+					pathFile.mkdirs();
+				}
+
 				result.add(exportXLS(data, path, account, fnsName, fnsAddress, fnsRequest, isShowRestEveryDay));
 
 			} catch (SessionException e) {
