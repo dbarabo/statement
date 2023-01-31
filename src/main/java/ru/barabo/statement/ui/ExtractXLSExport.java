@@ -1,6 +1,8 @@
 package ru.barabo.statement.ui;
 
 import ru.barabo.statement.data.IDataExtractExportXLS;
+import ru.barabo.xls.Record;
+import ru.barabo.xls.Var;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -16,7 +18,7 @@ public class ExtractXLSExport extends AbstractAction {
     private IDataExtractExportXLS data;
     private JFormattedTextField dateFrom;
     private JFormattedTextField dateTo;
-    private JTextField account;
+    private JTextArea account;
     private JTextField path;
     private JCheckBox isTurn;
     private JComboBox<String> rurCombo;
@@ -25,8 +27,10 @@ public class ExtractXLSExport extends AbstractAction {
     private JCheckBox isOpened;
     private JCheckBox isShowRestEveryDay;
 
+    private Var varClient;
+
     public ExtractXLSExport(IDataExtractExportXLS data,
-                            JTextField account, JFormattedTextField dateFrom,
+                            JTextArea account, JFormattedTextField dateFrom,
                             JFormattedTextField dateTo, JTextField path,
                             JCheckBox isTurn, JComboBox rurCombo,
                             JList<String> accounts,
@@ -48,6 +52,21 @@ public class ExtractXLSExport extends AbstractAction {
         putValue(Action.NAME, "Выгрузить");
     }
 
+    public ExtractXLSExport(IDataExtractExportXLS data,
+                            JTextArea account, JFormattedTextField dateFrom,
+                            JFormattedTextField dateTo, JTextField path,
+                            JCheckBox isTurn, JComboBox rurCombo,
+                            JList<String> accounts,
+                            JFrame frame,
+                            JCheckBox isOpened,
+                            JCheckBox isShowRestEveryDay,
+                            Var varClient) {
+
+        this(data, account, dateFrom, dateTo, path, isTurn, rurCombo, accounts, frame, isOpened, isShowRestEveryDay);
+
+        this.varClient = varClient;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
 
@@ -64,13 +83,11 @@ public class ExtractXLSExport extends AbstractAction {
                 "",
                 "",
                 "",
-                /*fnsName.getText(),
-                fnsAddress.getText(),
-                fnsRequest.getText(),*/
                 isTurn.isSelected(),
                 rurCombo.getSelectedIndex() == 0,
                 isOpened.isSelected(),
-                isShowRestEveryDay.isSelected()
+                isShowRestEveryDay.isSelected(),
+                (Record) varClient.getResult().getValue()
                 )) ;
 
         accounts.removeAll();

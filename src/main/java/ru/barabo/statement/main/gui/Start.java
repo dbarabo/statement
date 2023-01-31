@@ -3,6 +3,7 @@ package ru.barabo.statement.main.gui;
 import ru.barabo.statement.afina.AfinaQuery;
 import ru.barabo.statement.data.DelegateDataExtractExportXLS;
 import ru.barabo.statement.data.IDataExtractExportXLS;
+import ru.barabo.statement.main.Statement;
 import ru.barabo.statement.main.resources.ResourcesManager;
 import ru.barabo.statement.ui.ExtractXLSExport;
 import ru.barabo.total.report.rtf.RtfReport;
@@ -15,11 +16,14 @@ import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Objects;
 
+import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
+import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;
+
 public class Start extends JFrame{
-	
-	//final static transient private Logger logger = Logger.getLogger(Start.class.getName());
 
 	public Start() {
 
@@ -55,9 +59,6 @@ public class Start extends JFrame{
 	    setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 		setExtendedState(JFrame.NORMAL);
 		setVisible( true );
-	    // setExtendedState(JFrame.MAXIMIZED_BOTH);
-	    // setVisible( true );
-		//setExtendedState(JFrame.MAXIMIZED_BOTH);
 	}
 
 	/**
@@ -68,14 +69,14 @@ public class Start extends JFrame{
 		JPanel panel = new JPanel(new GridBagLayout());
 
 		GridBagConstraints gridConstLabel = new GridBagConstraints(
-				0, 0, 1, 1, // плюс заголовок
+				0, 0, 1, 3, // плюс заголовок
 				0.0, 0.0,
 				GridBagConstraints.PAGE_START,
 				GridBagConstraints.HORIZONTAL,
 				new Insets(2, 2, 2, 2), 0, 0);
 
 		GridBagConstraints gridConstComp = new GridBagConstraints(
-				1, 0, 3, 1, // плюс заголовок
+				1, 0, 3, 3, // плюс заголовок
 				1.0, 0.0,
 				GridBagConstraints.PAGE_START,
 				GridBagConstraints.HORIZONTAL,
@@ -84,55 +85,11 @@ public class Start extends JFrame{
 		JLabel label = new JLabel("Счет:");
 		label.setHorizontalAlignment(SwingConstants.RIGHT);
 		panel.add(label, gridConstLabel);
-		JTextField account = new JTextField();
-		panel.add(account, gridConstComp);
-		/*
-		 *
-		 */
+		JTextArea account = new JTextArea();
+		account.setRows(3);
+		//account.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
-		gridConstLabel = new GridBagConstraints(
-				0, 1, 1, 1, // плюс заголовок
-				0.0, 0.0,
-				GridBagConstraints.PAGE_START,
-				GridBagConstraints.HORIZONTAL,
-				new Insets(2, 2, 2, 2), 0, 0);
-
-		gridConstComp = new GridBagConstraints(
-				1, 1, 3, 1, // плюс заголовок
-				1.0, 0.0,
-				GridBagConstraints.PAGE_START,
-				GridBagConstraints.HORIZONTAL,
-				new Insets(2, 2, 2, 2), 0, 0);
-
-		label = new JLabel("только с оборотами");
-		label.setHorizontalAlignment(SwingConstants.RIGHT);
-		panel.add(label, gridConstLabel);
-		JCheckBox isTurn = new JCheckBox("за указанный период");
-		panel.add(isTurn, gridConstComp);
-		/*
-		 *
-		 */
-
-		gridConstLabel = new GridBagConstraints(
-				0, 2, 1, 1, // плюс заголовок
-				0.0, 0.0,
-				GridBagConstraints.PAGE_START,
-				GridBagConstraints.HORIZONTAL,
-				new Insets(2, 2, 2, 2), 0, 0);
-
-		gridConstComp = new GridBagConstraints(
-				1, 2, 3, 1, // плюс заголовок
-				1.0, 0.0,
-				GridBagConstraints.PAGE_START,
-				GridBagConstraints.HORIZONTAL,
-				new Insets(2, 2, 2, 2), 0, 0);
-
-		label = new JLabel("Дата с:");
-		label.setHorizontalAlignment(SwingConstants.RIGHT);
-		DateFormat dateFormat = DateFormat.getDateInstance();
-		JFormattedTextField dateFrom = new JFormattedTextField(dateFormat);
-		panel.add( label, gridConstLabel);
-		panel.add( dateFrom, gridConstComp );
+		panel.add(new JScrollPane(account, VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_NEVER), gridConstComp);
 
 
 		gridConstLabel = new GridBagConstraints(
@@ -149,11 +106,14 @@ public class Start extends JFrame{
 				GridBagConstraints.HORIZONTAL,
 				new Insets(2, 2, 2, 2), 0, 0);
 
-		label = new JLabel("Дата по:");
+		label = new JLabel("только с оборотами");
 		label.setHorizontalAlignment(SwingConstants.RIGHT);
-		JFormattedTextField dateTo = new JFormattedTextField(dateFormat);
-		panel.add( label, gridConstLabel);
-		panel.add( dateTo, gridConstComp);
+		panel.add(label, gridConstLabel);
+		JCheckBox isTurn = new JCheckBox("за указанный период");
+		panel.add(isTurn, gridConstComp);
+		/*
+		 *
+		 */
 
 		gridConstLabel = new GridBagConstraints(
 				0, 4, 1, 1, // плюс заголовок
@@ -169,13 +129,21 @@ public class Start extends JFrame{
 				GridBagConstraints.HORIZONTAL,
 				new Insets(2, 2, 2, 2), 0, 0);
 
-		////
-		label = new JLabel("отображать обороты:");
+		label = new JLabel("Дата с:");
 		label.setHorizontalAlignment(SwingConstants.RIGHT);
-		JComboBox<String> rurCombo = new JComboBox<String>(new String[] {"в руб. эквиваленте", "в номинале"});
-		rurCombo.setSelectedIndex(0);
+		DateFormat dateFormat = DateFormat.getDateInstance();
+
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(new Date());
+		cal.set(Calendar.DAY_OF_YEAR, 1);
+
+		JFormattedTextField dateFrom = new JFormattedTextField(dateFormat);
+		//dateFrom.setText(dateFormat.format(cal.getTime()));
+		dateFrom.setValue(cal.getTime());
+
 		panel.add( label, gridConstLabel);
-		panel.add( rurCombo, gridConstComp);
+		panel.add( dateFrom, gridConstComp );
+
 
 		gridConstLabel = new GridBagConstraints(
 				0, 5, 1, 1, // плюс заголовок
@@ -191,13 +159,15 @@ public class Start extends JFrame{
 				GridBagConstraints.HORIZONTAL,
 				new Insets(2, 2, 2, 2), 0, 0);
 
-		/////
-
-		label = new JLabel("Путь к xls-файлу:");
+		label = new JLabel("Дата по:");
 		label.setHorizontalAlignment(SwingConstants.RIGHT);
-		JTextField path = new JTextField( RtfReport.getDefaultToDirectory().getAbsolutePath() );
+
+		JFormattedTextField dateTo = new JFormattedTextField(dateFormat);
+		//dateTo.setText(dateFormat.format(new Date()));
+		dateTo.setValue(new Date());
+
 		panel.add( label, gridConstLabel);
-		panel.add( path, gridConstComp);
+		panel.add( dateTo, gridConstComp);
 
 		gridConstLabel = new GridBagConstraints(
 				0, 6, 1, 1, // плюс заголовок
@@ -208,6 +178,50 @@ public class Start extends JFrame{
 
 		gridConstComp = new GridBagConstraints(
 				1, 6, 3, 1, // плюс заголовок
+				1.0, 0.0,
+				GridBagConstraints.PAGE_START,
+				GridBagConstraints.HORIZONTAL,
+				new Insets(2, 2, 2, 2), 0, 0);
+
+		////
+		label = new JLabel("отображать обороты:");
+		label.setHorizontalAlignment(SwingConstants.RIGHT);
+		JComboBox<String> rurCombo = new JComboBox<String>(new String[] {"в руб. эквиваленте", "в номинале"});
+		rurCombo.setSelectedIndex(0);
+		panel.add( label, gridConstLabel);
+		panel.add( rurCombo, gridConstComp);
+
+		gridConstLabel = new GridBagConstraints(
+				0, 7, 1, 1, // плюс заголовок
+				0.0, 0.0,
+				GridBagConstraints.PAGE_START,
+				GridBagConstraints.HORIZONTAL,
+				new Insets(2, 2, 2, 2), 0, 0);
+
+		gridConstComp = new GridBagConstraints(
+				1, 7, 3, 1, // плюс заголовок
+				1.0, 0.0,
+				GridBagConstraints.PAGE_START,
+				GridBagConstraints.HORIZONTAL,
+				new Insets(2, 2, 2, 2), 0, 0);
+
+		/////
+
+		label = new JLabel("Путь к xls-файлу:");
+		label.setHorizontalAlignment(SwingConstants.RIGHT);
+		JTextField path = new JTextField( RtfReport.getDefaultToDirectory().getAbsolutePath() );
+		panel.add( label, gridConstLabel);
+		panel.add( path, gridConstComp);
+
+		gridConstLabel = new GridBagConstraints(
+				0, 8, 1, 1, // плюс заголовок
+				0.0, 0.0,
+				GridBagConstraints.PAGE_START,
+				GridBagConstraints.HORIZONTAL,
+				new Insets(2, 2, 2, 2), 0, 0);
+
+		gridConstComp = new GridBagConstraints(
+				1, 8, 3, 1, // плюс заголовок
 				1.0, 0.0,
 				GridBagConstraints.PAGE_START,
 				GridBagConstraints.HORIZONTAL,
@@ -222,14 +236,14 @@ public class Start extends JFrame{
 
 
 		gridConstLabel = new GridBagConstraints(
-				0, 7, 1, 1, // плюс заголовок
+				0, 9, 1, 1, // плюс заголовок
 				0.0, 0.0,
 				GridBagConstraints.PAGE_START,
 				GridBagConstraints.HORIZONTAL,
 				new Insets(2, 2, 2, 2), 0, 0);
 
 		gridConstComp = new GridBagConstraints(
-				1, 7, 3, 1, // плюс заголовок
+				1, 9, 3, 1, // плюс заголовок
 				1.0, 0.0,
 				GridBagConstraints.PAGE_START,
 				GridBagConstraints.HORIZONTAL,
@@ -241,87 +255,14 @@ public class Start extends JFrame{
 		JCheckBox isShowEveryDay = new JCheckBox("показывать строкой");
 		panel.add(isShowEveryDay, gridConstComp);
 
-
-		/*gridConstLabel = new GridBagConstraints(
-				0, 6, 1, 1, // плюс заголовок
-				0.0, 0.0,
-				GridBagConstraints.PAGE_START,
-				GridBagConstraints.HORIZONTAL,
-				new Insets(2, 2, 2, 2), 0, 0);
-
-		gridConstComp = new GridBagConstraints(
-				1, 6, 3, 1, // плюс заголовок
-				1.0, 0.0,
-				GridBagConstraints.PAGE_START,
-				GridBagConstraints.HORIZONTAL,
-				new Insets(2, 2, 2, 2), 0, 0);
-*/
-		/*
-		label = new JLabel("Дата и номер запроса ФНС:");
-		label.setHorizontalAlignment(SwingConstants.RIGHT);
-		JTextField fnsRequest = new JTextField("");
-		panel.add( label, gridConstLabel);
-		panel.add( fnsRequest, gridConstComp);
-
-
-		gridConstLabel = new GridBagConstraints(
-				0, 7, 1, 1, // плюс заголовок
-				0.0, 0.0,
-				GridBagConstraints.PAGE_START,
-				GridBagConstraints.HORIZONTAL,
-				new Insets(2, 2, 2, 2), 0, 0);
-
-		gridConstComp = new GridBagConstraints(
-				1, 7, 3, 1, // плюс заголовок
-				1.0, 0.0,
-				GridBagConstraints.PAGE_START,
-				GridBagConstraints.HORIZONTAL,
-				new Insets(2, 2, 2, 2), 0, 0);
-
-		label = new JLabel("ИФНС:");
-		label.setHorizontalAlignment(SwingConstants.RIGHT);
-		JTextField fnsName = new JTextField();
-		panel.add( label, gridConstLabel);
-		panel.add( fnsName, gridConstComp);
-
-		gridConstLabel = new GridBagConstraints(
-				0, 8, 1, 1, // плюс заголовок
-				0.0, 0.0,
-				GridBagConstraints.PAGE_START,
-				GridBagConstraints.HORIZONTAL,
-				new Insets(2, 2, 2, 2), 0, 0);
-
-		gridConstComp = new GridBagConstraints(
-				1, 8, 4, 1, // плюс заголовок
-				1.0, 0.0,
-				GridBagConstraints.PAGE_START,
-				GridBagConstraints.HORIZONTAL,
-				new Insets(2, 2, 2, 2), 0, 0);
-
-		label = new JLabel("Адрес ИФНС:");
-		label.setHorizontalAlignment(SwingConstants.RIGHT);
-		JTextField fnsAddress = new JTextField();
-		panel.add( label, gridConstLabel);
-		panel.add( fnsAddress, gridConstComp);
-
-		gridConstComp = new GridBagConstraints(
-				0, 9, 4, 1, // плюс заголовок
-				1.0, 1.0,
-				GridBagConstraints.PAGE_START,
-				GridBagConstraints.BOTH,
-				new Insets(2, 2, 2, 2), 0, 0);
-
-		TableFNS tableFNS = new TableFNS(data, fnsName, fnsAddress);
-		panel.add( new JScrollPane(tableFNS), gridConstComp);
-*/
-
+		Statement.INSTANCE.addSearchClients(panel, 10);
 
 		DefaultListModel<String> model = new DefaultListModel<>();
 		JList<String> accounts = new JList<String>(model);
 		accounts.addMouseListener(getJListClicker(accounts));
 
 		gridConstComp = new GridBagConstraints(
-				0, 8, 4, 12, // плюс заголовок
+				0, 13, 4, 12, // плюс заголовок
 				1.0, 1.0,
 				GridBagConstraints.PAGE_START,
 				GridBagConstraints.BOTH,
@@ -331,14 +272,16 @@ public class Start extends JFrame{
 
 
 		JButton buttonOk = new  JButton(new ExtractXLSExport(data, account,
-				dateFrom, dateTo, path,  isTurn, rurCombo, accounts, this, isOpened, isShowEveryDay) );
+				dateFrom, dateTo, path,  isTurn, rurCombo, accounts, this, isOpened, isShowEveryDay, Statement.INSTANCE.getClientVar()) );
 
 		gridConstComp = new GridBagConstraints(
-				3, 22, 1, 1, // плюс заголовок
+				3, 25, 1, 1, // плюс заголовок
 				1.0, 0.0,
 				GridBagConstraints.PAGE_END,
 				GridBagConstraints.HORIZONTAL,
 				new Insets(2, 2, 2, 2), 0, 0);
+
+
 
 		panel.add( buttonOk, gridConstComp);
 
