@@ -96,8 +96,6 @@ public class ExtractXLSExport extends AbstractAction {
             ((DefaultListModel<String>)accounts.getModel()).addElement(item);
         }
 
-        frame.pack();
-
         final String report = !accountList.isEmpty()
                 ? "Выписки успешно выгружены в файл!"
                 : "Во время формирования выписки произошла ошибка!";

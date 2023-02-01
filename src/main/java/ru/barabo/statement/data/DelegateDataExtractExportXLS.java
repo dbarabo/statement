@@ -93,8 +93,6 @@ public class DelegateDataExtractExportXLS implements IDataExtractExportXLS {
 
 		String[] accountMasks = Pattern.compile("[,;\\s\\n]").split(accountsOra);
 
-		boolean isFind = false;
-
 		for (String accountMask : accountMasks) {
 
 			if(accountMask.isEmpty()) continue;
@@ -104,7 +102,7 @@ public class DelegateDataExtractExportXLS implements IDataExtractExportXLS {
 				accountMask = accountMask + "%";
 			}
 
-			if (!AfinaQuery.INSTANCE.select(SEL_ACCOUNT, new Object[] { accountMask }).isEmpty()) {
+			if (!AfinaQuery.INSTANCE.select(SEL_ACCOUNT, new Object[] { accountMask.trim() }).isEmpty()) {
 				return null;
 			}
 
@@ -122,8 +120,6 @@ public class DelegateDataExtractExportXLS implements IDataExtractExportXLS {
 									String path, String fnsName, String fnsAddress, String fnsRequest, boolean isTurn,
 									boolean isRur, boolean isOpened, boolean isShowRestEveryDay, Record clientId) {
 
-		logger.error("startExport account=" + account);
-
 		String select = SEL_ACCOUNT;
 		Object[] params = new Object[]{account};
 		if(isTurn) {
@@ -134,8 +130,6 @@ public class DelegateDataExtractExportXLS implements IDataExtractExportXLS {
 		String accountsOra = account.trim().replace('*', '%').replace('?', '_');
 
 		String[] accountMasks = Pattern.compile("[,;\\s\\n]").split(accountsOra);
-
-		logger.error("accountsOra=" + accountsOra);
 
 		if(isOpened) {
 			select += SEL_OPEN_ONLY;
@@ -159,17 +153,13 @@ public class DelegateDataExtractExportXLS implements IDataExtractExportXLS {
 
 		for (String accountMask : accountMasks) {
 
-			logger.error("accountMask=" + accountMask);
-
 			if(accountMask.isEmpty()) continue;
 
 			if((accountMask.length() < 10) &&
 					(accountMask.indexOf('%') < 0)) {
 				accountMask = accountMask + "%";
 			}
-			params[0] = accountMask;
-
-			logger.error("accountMask=" + accountMask);
+			params[0] = accountMask.trim();
 
 			List<Object[]> values = AfinaQuery.INSTANCE.select(select, params);
 
