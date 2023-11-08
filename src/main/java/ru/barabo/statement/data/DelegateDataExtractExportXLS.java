@@ -5,6 +5,7 @@ import ru.barabo.db.SessionException;
 import ru.barabo.db.SessionSetting;
 import ru.barabo.statement.afina.AfinaQuery;
 import ru.barabo.statement.jexel.ExportExtract;
+import ru.barabo.statement.main.Statement;
 import ru.barabo.statement.main.resources.ResourcesManager;
 import ru.barabo.xls.Record;
 
@@ -217,11 +218,20 @@ public class DelegateDataExtractExportXLS implements IDataExtractExportXLS {
 
 		ExportExtract exp = new ExportExtract();
 		
-		exp.export(oldFile, data, newMaket, fnsName, fnsAddress, fnsRequest, isShowRestEveryDay);
+		exp.export(oldFile, data, newMaket,
+				byString(Statement.INSTANCE.getSign1FioVar().getResult().getValue()),
+				byString(Statement.INSTANCE.getSign1PositionVar().getResult().getValue()),
+				byString(Statement.INSTANCE.getSign2FioVar().getResult().getValue()),
+				byString(Statement.INSTANCE.getSign2PositionVar().getResult().getValue()),
+				isShowRestEveryDay);
 
 		oldFile.delete();
 		
 		return newMaket;
+	}
+
+	private String byString(Object value) {
+		return value == null ? "" : value.toString();
 	}
 
 	@Override

@@ -257,12 +257,20 @@ public class Start extends JFrame{
 
 		Statement.INSTANCE.addSearchClients(panel, 10);
 
+		Statement.INSTANCE.addSignFio1(panel, 11);
+
+		Statement.INSTANCE.addSignPosition1(panel, 12);
+
+		Statement.INSTANCE.addSignFio2(panel, 13);
+
+		Statement.INSTANCE.addSignPosition2(panel, 14);
+
 		DefaultListModel<String> model = new DefaultListModel<>();
 		JList<String> accounts = new JList<String>(model);
 		accounts.addMouseListener(getJListClicker(accounts));
 
 		gridConstComp = new GridBagConstraints(
-				0, 13, 4, 12, // плюс заголовок
+				0, 15, 4, 10, // плюс заголовок
 				1.0, 1.0,
 				GridBagConstraints.PAGE_START,
 				GridBagConstraints.BOTH,
@@ -275,13 +283,11 @@ public class Start extends JFrame{
 				dateFrom, dateTo, path,  isTurn, rurCombo, accounts, this, isOpened, isShowEveryDay, Statement.INSTANCE.getClientVar()) );
 
 		gridConstComp = new GridBagConstraints(
-				3, 25, 1, 1, // плюс заголовок
+				3, 26, 1, 1, // плюс заголовок
 				1.0, 0.0,
 				GridBagConstraints.PAGE_END,
 				GridBagConstraints.HORIZONTAL,
 				new Insets(2, 2, 2, 2), 0, 0);
-
-
 
 		panel.add( buttonOk, gridConstComp);
 

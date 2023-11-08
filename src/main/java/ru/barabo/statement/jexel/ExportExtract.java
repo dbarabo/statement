@@ -27,7 +27,7 @@ public class ExportExtract {
 	private String valuta = "";
 
 	public void export(File file, Vector<Object[]> data, String newFile,
-			String fnsName, String fnsAddress, String fnsRequest, boolean isShowRestEveryDay) {
+			String sign1Fio, String sign1Position, String sign2Fio, String sign2Position, boolean isShowRestEveryDay) {
 		WritableSheet sheet = null;
 
 		WritableWorkbook copy = null;
@@ -52,9 +52,9 @@ public class ExportExtract {
 		}
 
 		assert sheet != null;
-		fillHead(sheet, data.get(0), fnsName, fnsAddress, fnsRequest);
+		fillHead(sheet, data.get(0));
 		
-		exportRows(sheet, data, isShowRestEveryDay);
+		exportRows(sheet, data, isShowRestEveryDay, sign1Fio, sign1Position, sign2Fio, sign2Position);
 
 		workbook0.close();
 		try {
@@ -70,8 +70,7 @@ public class ExportExtract {
 	/**
 	 * Заполняем шапку
 	 */
-	private void fillHead(WritableSheet sheet, Object[] headRow,
-			String fnsName, String fnsAddress, String fnsRequest) {
+	private void fillHead(WritableSheet sheet, Object[] headRow) {
 
 		valuta = (String) headRow[2];
 
@@ -98,8 +97,8 @@ public class ExportExtract {
 			label = new Label(13, 29, text, arial12BoldFormat); 
 			sheet.addCell(label);
 			
-			// Дата и номер запроса
-			label = new Label(17, 15, fnsRequest, arial12BoldFormat); 
+			// Дата и номер запроса fnsRequest
+			label = new Label(17, 15, "", arial12BoldFormat);
 			sheet.addCell(label);
 			
 			arial12BoldFormat = new WritableCellFormat(arial12ptBold);
@@ -137,12 +136,13 @@ public class ExportExtract {
 			arial12BoldFormat.setWrap(false); //перенос по словам если не помещается
 			arial12BoldFormat.setBackground(Colour.WHITE); //установить цвет
 			arial12BoldFormat.setBorder(Border.NONE, BorderLineStyle.THIN); //рисуем рамку
+
 			// ФНС
-			label = new Label(34, 3, fnsName, arial12BoldFormat); 
+			label = new Label(34, 3, "", arial12BoldFormat);
 			sheet.addCell(label);
 			
 			// ФНС адрес
-			label = new Label(34, 4, fnsAddress, arial12BoldFormat); 
+			label = new Label(34, 4, "", arial12BoldFormat);
 			sheet.addCell(label);
 		
 		} catch (WriteException e) {
@@ -174,7 +174,8 @@ public class ExportExtract {
 		return  new Label(column, row, txtRestOut, formatFont);
 	}
 
-	private void exportRows(WritableSheet sheet, Vector<Object[]> data, boolean isShowRestEveryDay) {
+	private void exportRows(WritableSheet sheet, Vector<Object[]> data, boolean isShowRestEveryDay,
+							String sign1Fio, String sign1Position, String sign2Fio, String sign2Position) {
 		
 		//установка шрифта
 		WritableFont arial12ptBold =
@@ -264,13 +265,15 @@ public class ExportExtract {
 				sheet.addCell(labOut);
 			}
 
-			fillTail(sheet, data.get(0), sumDeb, sumCred, data.size() + 36 + rowRest);
+			fillTail(sheet, data.get(0), sumDeb, sumCred, data.size() + 36 + rowRest,
+					sign1Fio, sign1Position, sign2Fio, sign2Position);
 		} catch (WriteException e) {
 			logger.error("exportRows WriteException ", e);
 		}
 	}
 	
-	private void fillTail(WritableSheet sheet, Object[] headRow, Double sumDeb, Double sumCred, int row) {
+	private void fillTail(WritableSheet sheet, Object[] headRow, Double sumDeb, Double sumCred, int row,
+						  String sign1Fio, String sign1Position, String sign2Fio, String sign2Position) {
 		//установка шрифта
 		WritableFont arial12ptBold = new WritableFont(WritableFont.ARIAL, 10, WritableFont.BOLD);
 		WritableCellFormat arial12BoldFormat = new WritableCellFormat(arial12ptBold);
@@ -346,9 +349,16 @@ public class ExportExtract {
 			sheet.addCell(label);
 			
 			row += 2;
-			text = ""; //Cfg.path().extractSigner();
-			label = new Label(1, row, text, arial12BoldFormat); 
+			label = new Label(1, row, sign1Fio.trim(), arial12BoldFormat);
 			sheet.addCell(label);
+			sheet.addCell(new Label(17, row, sign1Position.trim(), arial12BoldFormat) );
+
+
+			row += 2;
+			label = new Label(1, row, sign2Fio.trim(), arial12BoldFormat);
+			sheet.addCell(label);
+
+			sheet.addCell(new Label(17, row, sign2Position.trim(), arial12BoldFormat) );
 			
 		} catch (WriteException e) {
 			logger.error("fillTail WriteException ", e);
