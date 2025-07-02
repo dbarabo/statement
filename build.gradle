@@ -1,12 +1,17 @@
 buildscript {
-    ext.kotlin_version = "1.7.20"
+    ext.kotlin_version = "1.9.24"//"1.7.20"
 
     repositories {
         mavenCentral()
+
+        maven {
+            setUrl("https://plugins.gradle.org/m2/")
+        }
     }
 }
 
 plugins {
+    id 'java'
     id 'org.jetbrains.kotlin.jvm' version "$kotlin_version"
 }
 
@@ -17,8 +22,8 @@ tasks.withType(JavaExec) {
 }
 
 apply plugin: 'idea'
-apply plugin: 'java'
-apply plugin: 'kotlin'
+//apply plugin: 'java'
+//apply plugin: 'kotlin'
 
 sourceCompatibility = 1.8
 compileJava.options.encoding = 'UTF-8'
@@ -57,7 +62,7 @@ dependencies {
 
     implementation group: 'com.github.dbarabo', name: 'xlsx', version: '0.9.17'
 }
-
+/*
 compileKotlin {
     kotlinOptions.jvmTarget = "1.8"
 
@@ -69,6 +74,8 @@ compileKotlin {
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
+*/
+
 
 jar {
 

@@ -349,16 +349,16 @@ public class ExportExtract {
 			sheet.addCell(label);
 			
 			row += 2;
-			label = new Label(1, row, sign1Fio.trim(), arial12BoldFormat);
+			label = new Label(1, row, sign1Position.trim(), arial12BoldFormat);
 			sheet.addCell(label);
-			sheet.addCell(new Label(17, row, sign1Position.trim(), arial12BoldFormat) );
+			sheet.addCell(new Label(17, row, sign1Fio.trim(), arial12BoldFormat) );
 
 
 			row += 2;
-			label = new Label(1, row, sign2Fio.trim(), arial12BoldFormat);
+			label = new Label(1, row, sign2Position.trim(), arial12BoldFormat);
 			sheet.addCell(label);
 
-			sheet.addCell(new Label(17, row, sign2Position.trim(), arial12BoldFormat) );
+			sheet.addCell(new Label(17, row, sign2Fio.trim(), arial12BoldFormat) );
 			
 		} catch (WriteException e) {
 			logger.error("fillTail WriteException ", e);

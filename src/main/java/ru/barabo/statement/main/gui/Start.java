@@ -16,6 +16,7 @@ import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
@@ -131,8 +132,7 @@ public class Start extends JFrame{
 
 		label = new JLabel("Дата с:");
 		label.setHorizontalAlignment(SwingConstants.RIGHT);
-		DateFormat dateFormat = DateFormat.getDateInstance();
-
+		DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");//
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(new Date());
 		cal.set(Calendar.DAY_OF_YEAR, 1);
@@ -257,13 +257,13 @@ public class Start extends JFrame{
 
 		Statement.INSTANCE.addSearchClients(panel, 10);
 
-		Statement.INSTANCE.addSignFio1(panel, 11);
+		Statement.INSTANCE.addSignPosition1(panel, 11);
 
-		Statement.INSTANCE.addSignPosition1(panel, 12);
+		Statement.INSTANCE.addSignFio1(panel, 12);
 
-		Statement.INSTANCE.addSignFio2(panel, 13);
+		Statement.INSTANCE.addSignPosition2(panel, 13);
 
-		Statement.INSTANCE.addSignPosition2(panel, 14);
+		Statement.INSTANCE.addSignFio2(panel, 14);
 
 		DefaultListModel<String> model = new DefaultListModel<>();
 		JList<String> accounts = new JList<String>(model);
